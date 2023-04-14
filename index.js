@@ -6,19 +6,18 @@ const socketio = require('socket.io');
 const io = socketio(server);
 
 
-app.use('/',express.static(__dirname+'/public'));
-
 io.on('connection',(socket) => {
-    console.log('A user connected',socket.id);
+    // console.log('A user connected',socket.id);
+     socket.on('msg_send',(data)=>{
+         console.log(data);
+         //io.emit('msg_rcvd',data);
+         //socket.emit('msg_rcvd',data);
+         socket.broadcast.emit('msg_rcvd',data);
+     });
+ });
 
-    socket.on('from_client',() => {
-        console.log('Event coming from client');
-    });
 
-    setInterval(()=>{
-        socket.emit('from_server');
-    },2000);
-});
+app.use('/',express.static(__dirname+'/public'));
 
 server.listen(3000,()=> {
     console.log('Server Started');
